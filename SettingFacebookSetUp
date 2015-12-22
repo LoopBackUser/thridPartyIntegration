@@ -1,0 +1,57 @@
+Facebook   Login
+Step 1 : Make  loop Back Project 
+
+Steo 2 
+Install Packages
+npm install loopback-component-passport 
+npm install passport-facebook 
+
+Step 3 :
+Update server/model-config:
+Add following in server/model-config.json
+"UserCredential": {
+  "dataSource": "db",
+  "public": true
+},
+"UserIdentity": {
+  "dataSource": "db",
+  "public": true
+}
+Step 4 :
+Create a file server /boot/facbook-oauth.js:
+var PassportConfigurator =
+  require('loopback-component-passport').PassportConfigurator;
+ 
+module.exports = function(app) {
+  var passportConfigurator = new PassportConfigurator(app);
+ 
+  passportConfigurator.init();
+  passportConfigurator.setupModels({
+    userModel: app.models.User,
+    userIdentityModel: app.models.UserIdentity,
+    userCredentialModel: app.models.UserCredential
+  });
+  passportConfigurator.configureProvider('facebook-login',
+    require('../../providers.json')['facebook-login']);
+};
+Ad following in server/server.js, this will load the UserCredetails and UserIdentity models:
+var PassportConfigurator =
+  require('loopback-component-passport').PassportConfigurator;
+  
+  
+Create providers.json in application root: as per need 
+"facebook-link": {
+    "provider": "facebook",
+    "module": "passport-facebook",
+    "clientID": "{facebook-client-id-2}",
+    "clientSecret": "{facebook-client-secret-2}",
+    "callbackURL": "/link/facebook/callback",
+    "authPath": "/link/facebook",
+    "callbackPath": "/link/facebook/callback",
+    "successRedirect": "/auth/account",
+    "failureRedirect": "/login",
+    "scope": ["email", "user_likes"],
+    "link": true,
+    "failureFlash": true
+  }
+
